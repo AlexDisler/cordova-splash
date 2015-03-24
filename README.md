@@ -20,7 +20,7 @@ Install on a Mac:
 
      $ brew install imagemagick
      
-Install on a linux:
+Install on Linux:
 
      $ sudo apt-get install imagemagick
 
