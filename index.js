@@ -5,6 +5,7 @@ var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
 
+
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
  *
@@ -20,16 +21,16 @@ var getPlatforms = function (projectName) {
         isAdded : fs.existsSync('platforms/ios'),
         splashPath : 'platforms/ios/' + projectName + '/Resources/splash/',
         splash : [
-            { name : 'Default-568h@2x~iphone.png',    width : 640,  height : 1136 },
-            { name : 'Default-667h.png',              width : 750,  height : 1334 },
-            { name : 'Default-736h.png',              width : 1242,  height : 2208 },
-            { name : 'Default-Landscape-736h.png',    width : 2208,  height : 1242 },
-            { name : 'Default-Landscape@2x~ipad.png', width : 2048, height : 1536 },
-            { name : 'Default-Landscape~ipad.png',    width : 1024, height : 768 },
-            { name : 'Default-Portrait@2x~ipad.png',  width : 1536, height : 2048 },
-            { name : 'Default-Portrait~ipad.png',     width : 768,  height : 1024 },
-            { name : 'Default@2x~iphone.png',         width : 640,  height : 960 },
-            { name : 'Default~iphone.png',            width : 320,  height : 480 },
+            { name : 'Default-568h@2x~iphone',    width : 640,  height : 1136 },
+            { name : 'Default-667h',              width : 750,  height : 1334 },
+            { name : 'Default-736h',              width : 1242,  height : 2208 },
+            { name : 'Default-Landscape-736h',    width : 2208,  height : 1242 },
+            { name : 'Default-Landscape@2x~ipad', width : 2048, height : 1536 },
+            { name : 'Default-Landscape~ipad',    width : 1024, height : 768 },
+            { name : 'Default-Portrait@2x~ipad',  width : 1536, height : 2048 },
+            { name : 'Default-Portrait~ipad',     width : 768,  height : 1024 },
+            { name : 'Default@2x~iphone',         width : 640,  height : 960 },
+            { name : 'Default~iphone',            width : 320,  height : 480 },
         ]
     });
     platforms.push({
@@ -37,14 +38,14 @@ var getPlatforms = function (projectName) {
         isAdded : fs.existsSync('platforms/android'),
         splashPath : 'platforms/android/res/',
         splash : [
-            { name : 'drawable-land-ldpi/screen.png',  width : 320, height: 200 },
-            { name : 'drawable-land-mdpi/screen.png',  width : 480, height: 320 },
-            { name : 'drawable-land-hdpi/screen.png',  width : 800, height: 480 },
-            { name : 'drawable-land-xhdpi/screen.png', width : 1280, height: 720 },
-            { name : 'drawable-port-ldpi/screen.png',  width : 200, height: 320 },
-            { name : 'drawable-port-mdpi/screen.png',  width : 320, height: 480 },
-            { name : 'drawable-port-hdpi/screen.png',  width : 480, height: 800 },
-            { name : 'drawable-port-xhdpi/screen.png', width : 720, height: 1280 },
+            { name : 'drawable-land-ldpi/screen',  width : 320, height: 200 },
+            { name : 'drawable-land-mdpi/screen',  width : 480, height: 320 },
+            { name : 'drawable-land-hdpi/screen',  width : 800, height: 480 },
+            { name : 'drawable-land-xhdpi/screen', width : 1280, height: 720 },
+            { name : 'drawable-port-ldpi/screen',  width : 200, height: 320 },
+            { name : 'drawable-port-mdpi/screen',  width : 320, height: 480 },
+            { name : 'drawable-port-hdpi/screen',  width : 480, height: 800 },
+            { name : 'drawable-port-xhdpi/screen', width : 720, height: 1280 },
         ]
     });
     // TODO: add all platforms
@@ -59,7 +60,7 @@ var getPlatforms = function (projectName) {
  */
 var settings = {};
 settings.CONFIG_FILE = 'config.xml';
-settings.SPLASH_FILE   = 'splash.png';
+settings.SPLASH_FILE   = 'icon.png';
 
 /**
  * @var {Object} console utils
@@ -78,6 +79,11 @@ display.header = function (str) {
     console.log(' ' + str.cyan.underline);
     console.log('');
 };
+
+/*process.argv.forEach(function (val, index, array) {
+    console.log(index + ': ' + val);
+});*/
+var backgroundColor = process.argv.slice(2)[0] || 'FFFFFF';
 
 /**
  * read the config file and get the project name
@@ -111,11 +117,37 @@ var getProjectName = function () {
  */
 var generateSplash = function (platform, splash) {
     var deferred = Q.defer();
-    ig.crop({
+
+    var fileToDelete = platform.splashPath + splash.name + '.png';
+    if (fs.existsSync(fileToDelete)) {
+        display.error(fileToDelete + ' will be deleted.');
+        fs.unlinkSync(fileToDelete);
+    }
+
+    ig.convert([
+        settings.SPLASH_FILE,
+        '-resize', splash.width +'x'+ splash.height +'>',
+        '-size', splash.width +'x'+ splash.height,
+        'xc:#'+ backgroundColor,
+        '+swap',
+        '-gravity', 'center',
+        '-composite',
+        platform.splashPath + splash.name +'.jpg'
+    ] , function(err, stdout, stderr){
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve();
+            display.success(splash.name + ' created');
+        }
+    });
+
+    /*ig.crop({
         srcPath: settings.SPLASH_FILE,
-        dstPath: platform.splashPath + splash.name,
+        srcFormat: 'png',
+        dstPath: platform.splashPath + splash.name + '.jpg',
         quality: 1,
-        format: 'png',
+        format: 'jpg',
         width: splash.width,
         height: splash.height,
     } , function(err, stdout, stderr){
@@ -125,7 +157,8 @@ var generateSplash = function (platform, splash) {
             deferred.resolve();
             display.success(splash.name + ' created');
         }
-    });
+    });*/
+
     return deferred.promise;
 };
 
