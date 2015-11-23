@@ -12,6 +12,10 @@ Create a ```splash.png``` file in the root folder of your cordova project and ru
 
      $ cordova-splash
 
+To specify a custom splash image or config file use it like this:
+
+    $ cordova-splash --splash path/to/splash --config /path/to/config
+
 ### Requirements
 
 - ImageMagick
