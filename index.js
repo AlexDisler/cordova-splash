@@ -47,6 +47,14 @@ var getPlatforms = function (projectName) {
             { name : 'drawable-port-xhdpi/screen.png', width : 720, height: 1280 },
         ]
     });
+    platforms.push({
+	name: 'wp8',
+	isAdded: fs.existsSync('platforms/wp8'),
+	splashPath : 'platforms/wp8/',
+	splash: [
+	    { name : 'SplashScreenImage.jpg', width: 480 , height: 800 }
+	]
+    });
     // TODO: add all platforms
     deferred.resolve(platforms);
     return deferred.promise;
