@@ -56,7 +56,7 @@ var getPlatforms = function (projectName) {
             { name : 'SplashScreenPhone.scale-240.png', width : 1152, height: 1920 }
         ]
     });
-    // TODO: add all platforms
+    // TODO: add missing platforms
     deferred.resolve(platforms);
     return deferred.promise;
 };
