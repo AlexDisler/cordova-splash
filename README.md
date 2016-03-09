@@ -4,24 +4,23 @@ Automatic splash screen generator for Cordova. Create a splash screen (2208x2208
 
 ### Installation
 
-     $ sudo npm install cordova-splash -g
-
-### Usage
-
-Create a ```splash.png``` file in the root folder of your cordova project and run:
-
-     $ cordova-splash
+    $ sudo npm install cordova-splash -g
 
 ### Requirements
 
-- ImageMagick
+- ImageMagick installed (*Mac*: `brew install imagemagick`, *Debian/Ubuntu*: `sudo apt-get install imagemagick`, *Windows*: [See here](http://www.imagemagick.org/script/binary-releases.php#windows))
+- At least one platform was added to your project ([cordova platforms docs](http://cordova.apache.org/docs/en/edge/guide_platforms_index.md.html#Platform%20Guides))
+- Cordova's config.xml file must exist in the root folder ([cordova config.xml docs](http://cordova.apache.org/docs/en/edge/config_ref_index.md.html#The%20config.xml%20File))
 
-Install on a Mac:
+### Usage
 
-     $ brew install imagemagick
+Create a `splash.png` file in the root folder of your cordova project and run:
 
-- At least one platform was added to your project ([cordova platforms docs](http://cordova.apache.org/docs/en/3.4.0/guide_platforms_index.md.html#Platform%20Guides))
-- Cordova's config.xml file must exist in the root folder ([cordova config.xml docs](http://cordova.apache.org/docs/en/3.4.0/config_ref_index.md.html#The%20config.xml%20File))
+    $ cordova-splash
+
+### Icons
+
+Check out [cordova-icon](https://github.com/AlexDisler/cordova-icon)
 
 ### License
 
