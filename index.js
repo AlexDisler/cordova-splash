@@ -68,7 +68,6 @@ var getPlatforms = function (projectName) {
             { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 }
         ]
     });
-    // TODO: add missing platforms
     deferred.resolve(platforms);
     return deferred.promise;
 };
@@ -138,7 +137,7 @@ var generateSplash = function (platform, splash) {
         quality: 1,
         format: 'png',
         width: splash.width,
-        height: splash.height,
+        height: splash.height
     } , function(err, stdout, stderr){
         if (err) {
             deferred.reject(err);
