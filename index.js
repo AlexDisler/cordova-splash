@@ -61,8 +61,11 @@ var getPlatforms = function (projectName) {
         isAdded : fs.existsSync('platforms/windows'),
         splashPath : 'platforms/windows/images/',
         splash : [
-            { name: 'SplashScreen.scale-100.png',      width: 620,  height: 300  },
-            { name: 'SplashScreenPhone.scale-240.png', width: 1152, height: 1920 }
+            { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
+            { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
+            { name: 'SplashScreen.scale-150.png', width: 930,  height: 450  },
+            { name: 'SplashScreen.scale-200.png', width: 1240, height: 600  },
+            { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 }
         ]
     });
     // TODO: add missing platforms
