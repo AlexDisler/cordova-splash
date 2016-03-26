@@ -12,71 +12,71 @@ var Q      = require('q');
  * @return {Promise} resolves with an array of platforms
  */
 var getPlatforms = function (projectName) {
-    var deferred = Q.defer();
-    var platforms = [];
-    platforms.push({
-        name : 'ios',
-        // TODO: use async fs.exists
-        isAdded : fs.existsSync('platforms/ios'),
-        splashPath : 'platforms/ios/' + projectName + '/Images.xcassets/LaunchImage.launchimage/',
-        splash : [
-            { name: 'Default-568h@2x~iphone.png',           width: 640,  height: 1136 },
-            { name: 'Default-667h.png',                     width: 750,  height: 1334 },
-            { name: 'Default-736h.png',                     width: 1242, height: 2208 },
-            { name: 'Default-Landscape-736h.png',           width: 2208, height: 1242 },
-            { name: 'Default@2x~iphone.png',                width: 640,  height: 960  },
-            { name: 'Default~iphone.png',                   width: 320,  height: 480  },
+  var deferred = Q.defer();
+  var platforms = [];
+  platforms.push({
+    name : 'ios',
+    // TODO: use async fs.exists
+    isAdded : fs.existsSync('platforms/ios'),
+    splashPath : 'platforms/ios/' + projectName + '/Images.xcassets/LaunchImage.launchimage/',
+    splash : [
+      { name: 'Default-568h@2x~iphone.png',           width: 640,  height: 1136 },
+      { name: 'Default-667h.png',                     width: 750,  height: 1334 },
+      { name: 'Default-736h.png',                     width: 1242, height: 2208 },
+      { name: 'Default-Landscape-736h.png',           width: 2208, height: 1242 },
+      { name: 'Default@2x~iphone.png',                width: 640,  height: 960  },
+      { name: 'Default~iphone.png',                   width: 320,  height: 480  },
 
-            { name: 'Default-Portrait~iphone.png',          width: 320,  height: 480  },
-            { name: 'Default-Portrait@2x~iphone.png',       width: 640,  height: 960  },
-            { name: 'Default-Portrait-568h@2x~iphone.png',  width: 640,  height: 1136 },
-            { name: 'Default-Portrait-667h@2x~iphone.png',  width: 750,  height: 1334 },
-            { name: 'Default-Portrait-736h@3x~iphone.png',  width: 1242, height: 2208 },
+      { name: 'Default-Portrait~iphone.png',          width: 320,  height: 480  },
+      { name: 'Default-Portrait@2x~iphone.png',       width: 640,  height: 960  },
+      { name: 'Default-Portrait-568h@2x~iphone.png',  width: 640,  height: 1136 },
+      { name: 'Default-Portrait-667h@2x~iphone.png',  width: 750,  height: 1334 },
+      { name: 'Default-Portrait-736h@3x~iphone.png',  width: 1242, height: 2208 },
 
-            { name: 'Default-Landscape~iphone.png',         width: 480,  height: 320  },
-            { name: 'Default-Landscape@2x~iphone.png',      width: 960,  height: 640  },
-            { name: 'Default-Landscape-568h@2x~iphone.png', width: 1136, height: 640  },
-            { name: 'Default-Landscape-667h@2x~iphone.png', width: 1334, height: 750  },
-            { name: 'Default-Landscape-736h@3x~iphone.png', width: 2208, height: 1242 },
+      { name: 'Default-Landscape~iphone.png',         width: 480,  height: 320  },
+      { name: 'Default-Landscape@2x~iphone.png',      width: 960,  height: 640  },
+      { name: 'Default-Landscape-568h@2x~iphone.png', width: 1136, height: 640  },
+      { name: 'Default-Landscape-667h@2x~iphone.png', width: 1334, height: 750  },
+      { name: 'Default-Landscape-736h@3x~iphone.png', width: 2208, height: 1242 },
 
-            { name: 'Default-Portrait~ipad.png',            width: 768,  height: 1024 },
-            { name: 'Default-Portrait@2x~ipad.png',         width: 1536, height: 2048 },
-            { name: 'Default-Portrait@2x~ipad-pro.png',     width: 2048, height: 2732 },
+      { name: 'Default-Portrait~ipad.png',            width: 768,  height: 1024 },
+      { name: 'Default-Portrait@2x~ipad.png',         width: 1536, height: 2048 },
+      { name: 'Default-Portrait@2x~ipad-pro.png',     width: 2048, height: 2732 },
 
-            { name: 'Default-Landscape~ipad.png',           width: 1024, height: 768  },
-            { name: 'Default-Landscape@2x~ipad.png',        width: 2048, height: 1536 },
-            { name: 'Default-Landscape@2x~ipad-pro.png',    width: 2732, height: 2048 }
-        ]
-    });
-    platforms.push({
-        name : 'android',
-        isAdded : fs.existsSync('platforms/android'),
-        splashPath : 'platforms/android/res/',
-        splash : [
-            { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
-            { name: 'drawable-land-mdpi/screen.png',  width: 480,  height: 320  },
-            { name: 'drawable-land-hdpi/screen.png',  width: 800,  height: 480  },
-            { name: 'drawable-land-xhdpi/screen.png', width: 1280, height: 720  },
-            { name: 'drawable-port-ldpi/screen.png',  width: 200,  height: 320  },
-            { name: 'drawable-port-mdpi/screen.png',  width: 320,  height: 480  },
-            { name: 'drawable-port-hdpi/screen.png',  width: 480,  height: 800  },
-            { name: 'drawable-port-xhdpi/screen.png', width: 720,  height: 1280 }
-        ]
-    });
-    platforms.push({
-        name : 'windows',
-        isAdded : fs.existsSync('platforms/windows'),
-        splashPath : 'platforms/windows/images/',
-        splash : [
-            { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
-            { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
-            { name: 'SplashScreen.scale-150.png', width: 930,  height: 450  },
-            { name: 'SplashScreen.scale-200.png', width: 1240, height: 600  },
-            { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 }
-        ]
-    });
-    deferred.resolve(platforms);
-    return deferred.promise;
+      { name: 'Default-Landscape~ipad.png',           width: 1024, height: 768  },
+      { name: 'Default-Landscape@2x~ipad.png',        width: 2048, height: 1536 },
+      { name: 'Default-Landscape@2x~ipad-pro.png',    width: 2732, height: 2048 }
+    ]
+  });
+  platforms.push({
+    name : 'android',
+    isAdded : fs.existsSync('platforms/android'),
+    splashPath : 'platforms/android/res/',
+    splash : [
+      { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
+      { name: 'drawable-land-mdpi/screen.png',  width: 480,  height: 320  },
+      { name: 'drawable-land-hdpi/screen.png',  width: 800,  height: 480  },
+      { name: 'drawable-land-xhdpi/screen.png', width: 1280, height: 720  },
+      { name: 'drawable-port-ldpi/screen.png',  width: 200,  height: 320  },
+      { name: 'drawable-port-mdpi/screen.png',  width: 320,  height: 480  },
+      { name: 'drawable-port-hdpi/screen.png',  width: 480,  height: 800  },
+      { name: 'drawable-port-xhdpi/screen.png', width: 720,  height: 1280 }
+    ]
+  });
+  platforms.push({
+    name : 'windows',
+    isAdded : fs.existsSync('platforms/windows'),
+    splashPath : 'platforms/windows/images/',
+    splash : [
+      { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
+      { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
+      { name: 'SplashScreen.scale-150.png', width: 930,  height: 450  },
+      { name: 'SplashScreen.scale-200.png', width: 1240, height: 600  },
+      { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 }
+    ]
+  });
+  deferred.resolve(platforms);
+  return deferred.promise;
 };
 
 
@@ -93,17 +93,17 @@ settings.SPLASH_FILE   = 'splash.png';
  */
 var display = {};
 display.success = function (str) {
-    str = '✓  '.green + str;
-    console.log('  ' + str);
+  str = '✓  '.green + str;
+  console.log('  ' + str);
 };
 display.error = function (str) {
-    str = '✗  '.red + str;
-    console.log('  ' + str);
+  str = '✗  '.red + str;
+  console.log('  ' + str);
 };
 display.header = function (str) {
-    console.log('');
-    console.log(' ' + str.cyan.underline);
-    console.log('');
+  console.log('');
+  console.log(' ' + str.cyan.underline);
+  console.log('');
 };
 
 /**
@@ -112,21 +112,21 @@ display.header = function (str) {
  * @return {Promise} resolves to a string - the project's name
  */
 var getProjectName = function () {
-    var deferred = Q.defer();
-    var parser = new xml2js.Parser();
-    data = fs.readFile(settings.CONFIG_FILE, function (err, data) {
-        if (err) {
-            deferred.reject(err);
-        }
-        parser.parseString(data, function (err, result) {
-            if (err) {
-                deferred.reject(err);
-            }
-            var projectName = result.widget.name[0];
-            deferred.resolve(projectName);
-        });
+  var deferred = Q.defer();
+  var parser = new xml2js.Parser();
+  data = fs.readFile(settings.CONFIG_FILE, function (err, data) {
+    if (err) {
+      deferred.reject(err);
+    }
+    parser.parseString(data, function (err, result) {
+      if (err) {
+        deferred.reject(err);
+      }
+      var projectName = result.widget.name[0];
+      deferred.resolve(projectName);
     });
-    return deferred.promise;
+  });
+  return deferred.promise;
 };
 
 /**
@@ -137,23 +137,23 @@ var getProjectName = function () {
  * @return {Promise}
  */
 var generateSplash = function (platform, splash) {
-    var deferred = Q.defer();
-    ig.crop({
-        srcPath: settings.SPLASH_FILE,
-        dstPath: platform.splashPath + splash.name,
-        quality: 1,
-        format: 'png',
-        width: splash.width,
-        height: splash.height
-    } , function(err, stdout, stderr){
-        if (err) {
-            deferred.reject(err);
-        } else {
-            deferred.resolve();
-            display.success(splash.name + ' created');
-        }
-    });
-    return deferred.promise;
+  var deferred = Q.defer();
+  ig.crop({
+    srcPath: settings.SPLASH_FILE,
+    dstPath: platform.splashPath + splash.name,
+    quality: 1,
+    format: 'png',
+    width: splash.width,
+    height: splash.height
+  } , function(err, stdout, stderr){
+    if (err) {
+      deferred.reject(err);
+    } else {
+      deferred.resolve();
+      display.success(splash.name + ' created');
+    }
+  });
+  return deferred.promise;
 };
 
 /**
@@ -163,19 +163,19 @@ var generateSplash = function (platform, splash) {
  * @return {Promise}
  */
 var generateSplashForPlatform = function (platform) {
-    var deferred = Q.defer();
-    display.header('Generating splash screen for ' + platform.name);
-    var all = [];
-    var splashes = platform.splash;
-    splashes.forEach(function (splash) {
-        all.push(generateSplash(platform, splash));
-    });
-    Q.all(all).then(function () {
-        deferred.resolve();
-    }).catch(function (err) {
-        console.log(err);
-    });
-    return deferred.promise;
+  var deferred = Q.defer();
+  display.header('Generating splash screen for ' + platform.name);
+  var all = [];
+  var splashes = platform.splash;
+  splashes.forEach(function (splash) {
+    all.push(generateSplash(platform, splash));
+  });
+  Q.all(all).then(function () {
+    deferred.resolve();
+  }).catch(function (err) {
+    console.log(err);
+  });
+  return deferred.promise;
 };
 
 /**
@@ -185,19 +185,19 @@ var generateSplashForPlatform = function (platform) {
  * @return {Promise}
  */
 var generateSplashes = function (platforms) {
-    var deferred = Q.defer();
-    var sequence = Q();
-    var all = [];
-    _(platforms).where({ isAdded : true }).forEach(function (platform) {
-        sequence = sequence.then(function () {
-            return generateSplashForPlatform(platform);
-        });
-        all.push(sequence);
+  var deferred = Q.defer();
+  var sequence = Q();
+  var all = [];
+  _(platforms).where({ isAdded : true }).forEach(function (platform) {
+    sequence = sequence.then(function () {
+      return generateSplashForPlatform(platform);
     });
-    Q.all(all).then(function () {
-        deferred.resolve();
-    });
-    return deferred.promise;
+    all.push(sequence);
+  });
+  Q.all(all).then(function () {
+    deferred.resolve();
+  });
+  return deferred.promise;
 };
 
 /**
@@ -206,18 +206,18 @@ var generateSplashes = function (platforms) {
  * @return {Promise} resolves if at least one platform was found, rejects otherwise
  */
 var atLeastOnePlatformFound = function () {
-    var deferred = Q.defer();
-    getPlatforms().then(function (platforms) {
-        var activePlatforms = _(platforms).where({ isAdded : true });
-        if (activePlatforms.length > 0) {
-            display.success('platforms found: ' + _(activePlatforms).pluck('name').join(', '));
-            deferred.resolve();
-        } else {
-            display.error('No cordova platforms found. Make sure you are in the root folder of your Cordova project and add platforms with \'cordova platform add\'');
-            deferred.reject();
-        }
-    });
-    return deferred.promise;
+  var deferred = Q.defer();
+  getPlatforms().then(function (platforms) {
+    var activePlatforms = _(platforms).where({ isAdded : true });
+    if (activePlatforms.length > 0) {
+      display.success('platforms found: ' + _(activePlatforms).pluck('name').join(', '));
+      deferred.resolve();
+    } else {
+      display.error('No cordova platforms found. Make sure you are in the root folder of your Cordova project and add platforms with \'cordova platform add\'');
+      deferred.reject();
+    }
+  });
+  return deferred.promise;
 };
 
 /**
@@ -226,17 +226,17 @@ var atLeastOnePlatformFound = function () {
  * @return {Promise} resolves if exists, rejects otherwise
  */
 var validSplashExists = function () {
-    var deferred = Q.defer();
-    fs.exists(settings.SPLASH_FILE, function (exists) {
-        if (exists) {
-            display.success(settings.SPLASH_FILE + ' exists');
-            deferred.resolve();
-        } else {
-            display.error(settings.SPLASH_FILE + ' does not exist in the root folder');
-            deferred.reject();
-        }
-    });
-    return deferred.promise;
+  var deferred = Q.defer();
+  fs.exists(settings.SPLASH_FILE, function (exists) {
+    if (exists) {
+      display.success(settings.SPLASH_FILE + ' exists');
+      deferred.resolve();
+    } else {
+      display.error(settings.SPLASH_FILE + ' does not exist in the root folder');
+      deferred.reject();
+    }
+  });
+  return deferred.promise;
 };
 
 /**
@@ -245,31 +245,31 @@ var validSplashExists = function () {
  * @return {Promise} resolves if exists, rejects otherwise
  */
 var configFileExists = function () {
-    var deferred = Q.defer();
-    fs.exists(settings.CONFIG_FILE, function (exists) {
-        if (exists) {
-            display.success(settings.CONFIG_FILE + ' exists');
-            deferred.resolve();
-        } else {
-            display.error('cordova\'s ' + settings.CONFIG_FILE + ' does not exist in the root folder');
-            deferred.reject();
-        }
-    });
-    return deferred.promise;
+  var deferred = Q.defer();
+  fs.exists(settings.CONFIG_FILE, function (exists) {
+    if (exists) {
+      display.success(settings.CONFIG_FILE + ' exists');
+      deferred.resolve();
+    } else {
+      display.error('cordova\'s ' + settings.CONFIG_FILE + ' does not exist in the root folder');
+      deferred.reject();
+    }
+  });
+  return deferred.promise;
 };
 
 display.header('Checking Project & Splash');
 
 atLeastOnePlatformFound()
-    .then(validSplashExists)
-    .then(configFileExists)
-    .then(getProjectName)
-    .then(getPlatforms)
-    .then(generateSplashes)
-    .catch(function (err) {
-        if (err) {
-            console.log(err);
-        }
-    }).then(function () {
-        console.log('');
-    });
+.then(validSplashExists)
+.then(configFileExists)
+.then(getProjectName)
+.then(getPlatforms)
+.then(generateSplashes)
+.catch(function (err) {
+  if (err) {
+    console.log(err);
+  }
+}).then(function () {
+  console.log('');
+});
