@@ -1,9 +1,11 @@
 var fs     = require('fs');
+var path   = require('path');
 var xml2js = require('xml2js');
 var ig     = require('imagemagick');
 var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
+var wrench = require('wrench');
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -138,9 +140,19 @@ var getProjectName = function () {
  */
 var generateSplash = function (platform, splash) {
   var deferred = Q.defer();
+  var srcPath = settings.SPLASH_FILE;
+  var platformPath = srcPath.replace(/\.png$/, '-' + platform.name + '.png');
+  if (fs.existsSync(platformPath)) {
+    srcPath = platformPath;
+  }
+  var dstPath = platform.splashPath + splash.name;
+  var dst = path.dirname(dstPath);
+  if (!fs.existsSync(dst)) {
+    wrench.mkdirSyncRecursive(dst);
+  }
   ig.crop({
-    srcPath: settings.SPLASH_FILE,
-    dstPath: platform.splashPath + splash.name,
+    srcPath: srcPath,
+    dstPath: dstPath,
     quality: 1,
     format: 'png',
     width: splash.width,
