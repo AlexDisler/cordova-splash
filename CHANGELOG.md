@@ -2,6 +2,13 @@
 All notable changes to this project [will be documented](http://keepachangelog.com/) in this file.
 This project *tries to* adhere to [Semantic Versioning](http://semver.org/).
 
+## [0.7.0] - 2016-14-17
+
+- uses config/res as the default folder to persist generated files (not backwards compatible)
+- Add --help option
+- Ability to specify output path 
+- Backwards-compatibility mode to use platforms path instead of new defaults (-c)
+
 ## [0.5.1] - 2016-03-11
 - iOS: Get back sizes from previous version of the repo (eb65d2d)
 
