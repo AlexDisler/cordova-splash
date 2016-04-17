@@ -22,6 +22,7 @@ var getPlatforms = function (projectName) {
     // TODO: use async fs.exists
     isAdded : fs.existsSync('platforms/ios'),
     splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/ios/').replace('//', '/'),
+    platformSplashPath : 'platforms/ios/' + projectName + '/Images.xcassets/LaunchImage.launchimage/',
     splash : [
       // iPhone
       { name: 'Default~iphone.png',            width: 320,  height: 480  },
@@ -41,6 +42,7 @@ var getPlatforms = function (projectName) {
     name : 'android',
     isAdded : fs.existsSync('platforms/android'),
     splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/android/').replace('//', '/'),
+    platformSplashPath: 'platforms/android/res/',
     splash : [
       // Landscape
       { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
@@ -62,6 +64,7 @@ var getPlatforms = function (projectName) {
     name : 'windows',
     isAdded : fs.existsSync('platforms/windows'),
     splashPath :(settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/windows/').replace('//', '/'),
+    platformSplashPath: 'platforms/windows/images/',
     splash : [
       { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
       { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
@@ -84,6 +87,7 @@ settings.CONFIG_FILE = 'config.xml';
 settings.SPLASH_FILE   = 'splash.png';
 settings.RESOURCE_PATH = 'config/res'; // without trailing slash
 settings.SCREEN_DIR = 'screen'; // without slashes
+settings.USE_PLATFORMS_PATH = false; // true to use platforms path
 
 /**
  * @var {Object} console utils
@@ -140,7 +144,8 @@ var generateSplash = function (platform, splash) {
   if (fs.existsSync(platformPath)) {
     srcPath = platformPath;
   }
-  var dstPath = platform.splashPath + splash.name;
+  var dstPath = (settings.USE_PLATFORMS_PATH ? 
+	platform.platformSplashPath : platform.splashPath) + splash.name;
   var dst = path.dirname(dstPath);
   if (!fs.existsSync(dst)) {
     wrench.mkdirSyncRecursive(dst);
@@ -273,6 +278,7 @@ var parseOptions = function() {
      ['-h', '--help', 'Show this help'],
      ['-p', '--path PATH', 'resource path, defaults to ' + settings.RESOURCE_PATH],
      ['-s', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
+     ['-c', '--compat', 'uses default path in platforms (backwards compatibility, overrides -p and -i)'],
   ];
   var parser = new optparse.OptionParser(switches);
   parser.on('help', function() {
@@ -284,6 +290,9 @@ var parseOptions = function() {
   });
   parser.on('screen', function(opt, path) {
 	settings.SCREEN_DIR = path;
+  });
+  parser.on('compat', function() {
+	settings.USE_PLATFORMS_PATH = true;
   });
   parser.parse(process.argv);
 }
