@@ -17,6 +17,19 @@ Automatic splash screen generator for Cordova. Create a splash screen (2208x2208
 Create a `splash.png` file in the root folder of your cordova project and run:
 
     $ cordova-splash
+    
+You may specify the output path and directory as follows:
+
+    # output to path/to/res/screen
+    $ cordova-splash -p path/to/res -s screen
+    
+WARNING: If you were using a previous version of cordova-splash and expect the generated files to be in their respective ./platforms
+path, use the compability mode:
+
+    $ cordova-splash -c
+    
+This will override the -p and -s settings.
+    
 
 ### Icons
 
