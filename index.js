@@ -41,14 +41,18 @@ var getPlatforms = function (projectName) {
     isAdded : fs.existsSync('platforms/android'),
     splashPath : 'platforms/android/res/',
     splash : [
-      { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
-      { name: 'drawable-land-mdpi/screen.png',  width: 480,  height: 320  },
-      { name: 'drawable-land-hdpi/screen.png',  width: 800,  height: 480  },
-      { name: 'drawable-land-xhdpi/screen.png', width: 1280, height: 720  },
-      { name: 'drawable-port-ldpi/screen.png',  width: 200,  height: 320  },
-      { name: 'drawable-port-mdpi/screen.png',  width: 320,  height: 480  },
-      { name: 'drawable-port-hdpi/screen.png',  width: 480,  height: 800  },
-      { name: 'drawable-port-xhdpi/screen.png', width: 720,  height: 1280 }
+      { name: 'land-ldpi.png',  width: 320,  height: 200  },
+      { name: 'land-mdpi.png',  width: 480,  height: 320  },
+      { name: 'land-hdpi.png',  width: 800,  height: 480  },
+      { name: 'land-xhdpi.png', width: 1280, height: 720  },
+      { name: 'land-xxhdpi.png', width: 1600, height: 960  },
+      { name: 'land-xxxhdpi.png', width: 1920, height: 1280  },
+      { name: 'port-ldpi.png',  width: 200,  height: 320  },
+      { name: 'port-mdpi.png',  width: 320,  height: 480  },
+      { name: 'port-hdpi.png',  width: 480,  height: 800  },
+      { name: 'port-xhdpi.png', width: 720,  height: 1280 },
+      { name: 'port-xxhdpi.png', width: 960, height: 1600  },
+      { name: 'port-xxxhdpi.png', width: 1280, height: 1920  }
     ]
   });
   platforms.push({
