@@ -2,6 +2,10 @@
 All notable changes to this project [will be documented](http://keepachangelog.com/) in this file.
 This project *tries to* adhere to [Semantic Versioning](http://semver.org/).
 
+## [0.7.1] - 2016-04-21
+- iOS: Cleanup sizes (8a6f76e)
+- Android: Add xxhdpi & xxxhdpi (3739f62)
+
 ## [0.7.0] - 2016-04-13
 - Use wrench to prevent issues with directory creation (6b0da63)
 
