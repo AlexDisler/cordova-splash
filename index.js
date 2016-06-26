@@ -1,11 +1,10 @@
-var fs     = require('fs');
+var fs     = require('fs-extra');
 var path   = require('path');
 var xml2js = require('xml2js');
 var ig     = require('imagemagick');
 var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
-var wrench = require('wrench');
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -140,7 +139,7 @@ var generateSplash = function (platform, splash) {
   var dstPath = platform.splashPath + splash.name;
   var dst = path.dirname(dstPath);
   if (!fs.existsSync(dst)) {
-    wrench.mkdirSyncRecursive(dst);
+    fs.mkdirsSync(dst);
   }
   ig.crop({
     srcPath: srcPath,
