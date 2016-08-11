@@ -236,7 +236,7 @@ var validSplashExists = function () {
       display.success(settings.SPLASH_FILE + ' exists');
       deferred.resolve();
     } else {
-      display.error(settings.SPLASH_FILE + ' does not exist in the root folder');
+      display.error(settings.SPLASH_FILE + ' does not exist');
       deferred.reject();
     }
   });
@@ -255,7 +255,7 @@ var configFileExists = function () {
       display.success(settings.CONFIG_FILE + ' exists');
       deferred.resolve();
     } else {
-      display.error('cordova\'s ' + settings.CONFIG_FILE + ' does not exist in the root folder');
+      display.error('cordova\'s ' + settings.CONFIG_FILE + ' does not exist');
       deferred.reject();
     }
   });
