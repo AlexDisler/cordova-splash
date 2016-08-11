@@ -6,6 +6,7 @@ var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
 var wrench = require('wrench');
+var argv   = require('minimist')(process.argv.slice(2));
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -76,11 +77,10 @@ var getPlatforms = function (projectName) {
 
 /**
  * @var {Object} settings - names of the config file and of the splash image
- * TODO: add option to get these values as CLI params
  */
 var settings = {};
-settings.CONFIG_FILE = 'config.xml';
-settings.SPLASH_FILE   = 'splash.png';
+settings.CONFIG_FILE = argv.config || 'config.xml';
+settings.SPLASH_FILE = argv.splash || 'splash.png';
 
 /**
  * @var {Object} console utils

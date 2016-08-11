@@ -18,6 +18,10 @@ Create a `splash.png` file in the root folder of your cordova project and run:
 
     $ cordova-splash
 
+Specify a different location for your `config.xml` or `splash.png`
+
+    $ cordova-splash --config=config.xml --splash=splash.png
+
 ### Icons
 
 Check out [cordova-icon](https://github.com/AlexDisler/cordova-icon)
