@@ -6,6 +6,7 @@ var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
 var wrench = require('wrench');
+var optparse = require('optparse');
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -20,7 +21,7 @@ var getPlatforms = function (projectName) {
     name : 'ios',
     // TODO: use async fs.exists
     isAdded : fs.existsSync('platforms/ios'),
-    splashPath : 'platforms/ios/' + projectName + '/Resources/splash/',
+    splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/ios/').replace('//', '/'),
     splash : [
       // iPhone
       { name: 'Default~iphone.png',            width: 320,  height: 480  },
@@ -39,7 +40,7 @@ var getPlatforms = function (projectName) {
   platforms.push({
     name : 'android',
     isAdded : fs.existsSync('platforms/android'),
-    splashPath : 'platforms/android/res/',
+    splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/android/').replace('//', '/'),
     splash : [
       // Landscape
       { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
@@ -60,7 +61,7 @@ var getPlatforms = function (projectName) {
   platforms.push({
     name : 'windows',
     isAdded : fs.existsSync('platforms/windows'),
-    splashPath : 'platforms/windows/images/',
+    splashPath :(settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/windows/').replace('//', '/'),
     splash : [
       { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
       { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
@@ -81,6 +82,8 @@ var getPlatforms = function (projectName) {
 var settings = {};
 settings.CONFIG_FILE = 'config.xml';
 settings.SPLASH_FILE   = 'splash.png';
+settings.RESOURCE_PATH = 'config/res'; // without trailing slash
+settings.SCREEN_DIR = 'screen'; // without slashes
 
 /**
  * @var {Object} console utils
@@ -154,7 +157,7 @@ var generateSplash = function (platform, splash) {
       deferred.reject(err);
     } else {
       deferred.resolve();
-      display.success(splash.name + ' created');
+      display.success(splash.name + ' created [' + dstPath + ']');
     }
   });
   return deferred.promise;
@@ -261,6 +264,31 @@ var configFileExists = function () {
   });
   return deferred.promise;
 };
+
+/**
+ * parse command line options
+ */
+var parseOptions = function() {
+  var switches = [
+     ['-h', '--help', 'Show this help'],
+     ['-p', '--path PATH', 'resource path, defaults to ' + settings.RESOURCE_PATH],
+     ['-s', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
+  ];
+  var parser = new optparse.OptionParser(switches);
+  parser.on('help', function() {
+	console.log(parser.toString());
+	process.exit();
+  });
+  parser.on('path', function(opt, path) {
+	settings.RESOURCE_PATH = path;
+  });
+  parser.on('screen', function(opt, path) {
+	settings.SCREEN_DIR = path;
+  });
+  parser.parse(process.argv);
+}
+
+parseOptions();
 
 display.header('Checking Project & Splash');
 
