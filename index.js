@@ -22,7 +22,7 @@ var getPlatforms = function (projectName) {
     // TODO: use async fs.exists
     isAdded : fs.existsSync('platforms/ios'),
     splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/ios/').replace('//', '/'),
-    platformSplashPath : 'platforms/ios/' + projectName + '/Images.xcassets/LaunchImage.launchimage/',
+    platformSplashPath : 'platforms/ios/' + projectName + '/Resources/splash/',
     splash : [
       // iPhone
       { name: 'Default~iphone.png',            width: 320,  height: 480  },
@@ -144,7 +144,7 @@ var generateSplash = function (platform, splash) {
   if (fs.existsSync(platformPath)) {
     srcPath = platformPath;
   }
-  var dstPath = (settings.USE_PLATFORMS_PATH ? 
+  var dstPath = (settings.USE_PLATFORMS_PATH ?
 	platform.platformSplashPath : platform.splashPath) + splash.name;
   var dst = path.dirname(dstPath);
   if (!fs.existsSync(dst)) {
