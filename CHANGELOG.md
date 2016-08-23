@@ -6,8 +6,12 @@ This project *tries to* adhere to [Semantic Versioning](http://semver.org/).
 - iOS: Cleanup sizes (8a6f76e)
 - Android: Add xxhdpi & xxxhdpi (3739f62)
 
-## [0.7.0] - 2016-04-13
+## [0.7.0] - 2016-04-17
 - Use wrench to prevent issues with directory creation (6b0da63)
+- uses config/res as the default folder to persist generated files (not backwards compatible)
+- Add --help option
+- Ability to specify output path
+- Backwards-compatibility mode to use platforms path instead of new defaults (-c)
 
 ## [0.6.0] - 2016-03-26
 - *Ahem, nothing?*
