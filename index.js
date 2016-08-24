@@ -9,6 +9,14 @@ var wrench = require('wrench');
 var argv   = require('minimist')(process.argv.slice(2));
 
 /**
+ * @var {Object} settings - names of the config file and of the splash image
+ */
+var settings = {};
+settings.CONFIG_FILE = argv.config || 'config.xml';
+settings.SPLASH_FILE = argv.splash || 'splash.png';
+settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
+
+/**
  * Check which platforms are added to the project and return their splash screen names and sizes
  *
  * @param  {String} projectName
@@ -17,11 +25,17 @@ var argv   = require('minimist')(process.argv.slice(2));
 var getPlatforms = function (projectName) {
   var deferred = Q.defer();
   var platforms = [];
+  var xcodeFolder = '/Images.xcassets/AppIcon.appiconset/';
+
+  if (settings.OLD_XCODE_PATH) {
+    xcodeFolder = '/Resources/icons/';
+  }
+
   platforms.push({
     name : 'ios',
     // TODO: use async fs.exists
     isAdded : fs.existsSync('platforms/ios'),
-    splashPath : 'platforms/ios/' + projectName + '/Resources/splash/',
+    splashPath : 'platforms/ios/' + projectName + xcodeFolder,
     splash : [
       // iPhone
       { name: 'Default~iphone.png',            width: 320,  height: 480  },
@@ -78,14 +92,6 @@ var getPlatforms = function (projectName) {
   deferred.resolve(platforms);
   return deferred.promise;
 };
-
-
-/**
- * @var {Object} settings - names of the config file and of the splash image
- */
-var settings = {};
-settings.CONFIG_FILE = argv.config || 'config.xml';
-settings.SPLASH_FILE = argv.splash || 'splash.png';
 
 /**
  * @var {Object} console utils
