@@ -3,7 +3,7 @@
   "version": "0.8.0",
   "description": "Automatic splash screen cropping for Cordova",
   "main": "index.js",
-  "preferGlobal": "true",
+  "preferGlobal": true,
   "directories": {
     "bin": "./bin"
   },

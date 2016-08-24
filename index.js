@@ -82,8 +82,8 @@ var getPlatforms = function (projectName) {
       { name: 'SplashScreen.scale-150.png', width: 930,  height: 450  },
       { name: 'SplashScreen.scale-200.png', width: 1240, height: 600  },
       { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 },
-	    // Portrait
-	    { name: 'SplashScreenPhone.scale-240.png', width: 1152,  height: 1920  },	
+      // Portrait
+      { name: 'SplashScreenPhone.scale-240.png', width: 1152,  height: 1920  },
       { name: 'SplashScreenPhone.scale-140.png', width: 672,  height: 1120  },
       { name: 'SplashScreenPhone.scale-100.png', width: 480,  height: 800  }
     ]
@@ -118,7 +118,7 @@ display.header = function (str) {
 var getProjectName = function () {
   var deferred = Q.defer();
   var parser = new xml2js.Parser();
-  data = fs.readFile(settings.CONFIG_FILE, function (err, data) {
+  fs.readFile(settings.CONFIG_FILE, function (err, data) {
     if (err) {
       deferred.reject(err);
     }
@@ -227,7 +227,11 @@ var atLeastOnePlatformFound = function () {
       display.success('platforms found: ' + _(activePlatforms).pluck('name').join(', '));
       deferred.resolve();
     } else {
-      display.error('No cordova platforms found. Make sure you are in the root folder of your Cordova project and add platforms with \'cordova platform add\'');
+      display.error(
+        'No cordova platforms found. ' +
+        'Make sure you are in the root folder of your Cordova project ' +
+        'and add platforms with \'cordova platform add\''
+      );
       deferred.reject();
     }
   });
