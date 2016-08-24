@@ -18,9 +18,13 @@ Create a `splash.png` file in the root folder of your cordova project and run:
 
     $ cordova-splash
 
-Specify a different location for your `config.xml` or `splash.png`
+You also can specify manually a location for your `config.xml` or `splash.png`:
 
     $ cordova-splash --config=config.xml --splash=splash.png
+
+If you run a old version of Cordova for iOS and you need your files in `/Resources/icons/`, use this option:
+
+    $ cordova-splash --xcode-old
 
 ### Icons
 
