@@ -24,10 +24,10 @@ settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
 var getPlatforms = function (projectName) {
   var deferred = Q.defer();
   var platforms = [];
-  var xcodeFolder = '/Images.xcassets/AppIcon.appiconset/';
+  var xcodeFolder = '/Images.xcassets/LaunchImage.launchimage/';
 
   if (settings.OLD_XCODE_PATH) {
-    xcodeFolder = '/Resources/icons/';
+    xcodeFolder = '/Resources/splash/';
   }
 
   platforms.push({
