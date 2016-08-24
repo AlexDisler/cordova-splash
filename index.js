@@ -200,7 +200,7 @@ var generateSplashes = function (platforms) {
   var deferred = Q.defer();
   var sequence = Q();
   var all = [];
-  _(platforms).where({ isAdded : true }).forEach(function (platform) {
+  _(platforms).forEach(function (platform) {
     sequence = sequence.then(function () {
       return generateSplashForPlatform(platform);
     });
@@ -223,6 +223,8 @@ var atLeastOnePlatformFound = function () {
     var activePlatforms = _(platforms).where({ isAdded : true });
     if (activePlatforms.length > 0) {
       display.success('platforms found: ' + _(activePlatforms).pluck('name').join(', '));
+      deferred.resolve();
+    } else if (!settings.USE_PLATFORMS_PATH) {
       deferred.resolve();
     } else {
       display.error('No cordova platforms found. Make sure you are in the root folder of your Cordova project and add platforms with \'cordova platform add\'');
