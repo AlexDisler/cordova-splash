@@ -60,19 +60,21 @@ var getPlatforms = function (projectName) {
       { name: 'drawable-port-xxxhdpi/screen.png', width: 1280, height: 1920  }
     ]
   });
-  platforms.push({
-    name : 'windows',
-    isAdded : fs.existsSync('platforms/windows'),
-    splashPath :(settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/windows/').replace('//', '/'),
-    platformSplashPath: 'platforms/windows/images/',
-    splash : [
-      { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
-      { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
-      { name: 'SplashScreen.scale-150.png', width: 930,  height: 450  },
-      { name: 'SplashScreen.scale-200.png', width: 1240, height: 600  },
-      { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 }
-    ]
-  });
+  if (settings.WINDOWS) {
+    platforms.push({
+      name : 'windows',
+      isAdded : fs.existsSync('platforms/windows'),
+      splashPath :(settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/windows/').replace('//', '/'),
+      platformSplashPath: 'platforms/windows/images/',
+      splash : [
+        { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
+        { name: 'SplashScreen.scale-125.png', width: 775,  height: 375  },
+        { name: 'SplashScreen.scale-150.png', width: 930,  height: 450  },
+        { name: 'SplashScreen.scale-200.png', width: 1240, height: 600  },
+        { name: 'SplashScreen.scale-400.png', width: 2480, height: 1200 }
+      ]
+    });
+  }
   deferred.resolve(platforms);
   return deferred.promise;
 };
@@ -88,6 +90,7 @@ settings.SPLASH_FILE   = 'splash.png';
 settings.RESOURCE_PATH = 'config/res'; // without trailing slash
 settings.SCREEN_DIR = 'screen'; // without slashes
 settings.USE_PLATFORMS_PATH = false; // true to use platforms path
+settings.WINDOWS = false; // build windows splashes
 
 /**
  * @var {Object} console utils
@@ -281,6 +284,7 @@ var parseOptions = function() {
      ['-p', '--path PATH', 'resource path, defaults to ' + settings.RESOURCE_PATH],
      ['-s', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
      ['-c', '--compat', 'uses default path in platforms (backwards compatibility, overrides -p and -i)'],
+     ['-w', '--windows', 'generate windows icons as well, will not by default.'],
   ];
   var parser = new optparse.OptionParser(switches);
   parser.on('help', function() {
@@ -295,6 +299,9 @@ var parseOptions = function() {
   });
   parser.on('compat', function() {
 	settings.USE_PLATFORMS_PATH = true;
+  });
+  parser.on('windows', function() {
+    settings.WINDOWS = true;
   });
   parser.parse(process.argv);
 }
