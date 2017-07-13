@@ -13,6 +13,7 @@ var argv   = require('minimist')(process.argv.slice(2));
 var settings = {};
 settings.CONFIG_FILE = argv.config || 'config.xml';
 settings.SPLASH_FILE = argv.splash || 'splash.png';
+settings.SPLASH_FILE_LANDSCAPE = argv['splash-landscape'] || 'splash-landscape.png';
 settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
 
 /**
@@ -143,6 +144,9 @@ var getProjectName = function () {
 var generateSplash = function (platform, splash) {
   var deferred = Q.defer();
   var srcPath = settings.SPLASH_FILE;
+  if (splash.width > splash.height) {
+    srcPath = settings.SPLASH_FILE_LANDSCAPE;
+  }
   var platformPath = srcPath.replace(/\.png$/, '-' + platform.name + '.png');
   if (fs.existsSync(platformPath)) {
     srcPath = platformPath;
@@ -248,7 +252,15 @@ var validSplashExists = function () {
   fs.exists(settings.SPLASH_FILE, function (exists) {
     if (exists) {
       display.success(settings.SPLASH_FILE + ' exists');
-      deferred.resolve();
+      fs.exists(settings.SPLASH_FILE_LANDSCAPE, function (exists) {
+        if (exists) {
+          display.success(settings.SPLASH_FILE_LANDSCAPE + ' exists');
+        } else {
+          display.error(settings.SPLASH_FILE + ' does not exist, using ' + settings.SPLASH_FILE);
+          settings.SPLASH_FILE_LANDSCAPE = settings.SPLASH_FILE;
+        }
+        deferred.resolve();
+      });
     } else {
       display.error(settings.SPLASH_FILE + ' does not exist');
       deferred.reject();

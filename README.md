@@ -24,6 +24,10 @@ You also can specify manually a location for your `config.xml` or `splash.png`:
 
     $ cordova-splash --config=config.xml --splash=splash.png
 
+In case you want to specify a different splash image for landscape mode create either a `splash-landscape.png` or run: 
+
+    $ cordova-splash --splash-landscape=splash-landscape.png
+
 If you run a old version of Cordova for iOS and you need your files in `/Resources/icons/`, use this option:
 
     $ cordova-splash --xcode-old
