@@ -43,6 +43,8 @@ var getPlatforms = function (projectName) {
       { name: 'Default-667h.png',              width: 750,  height: 1334 },
       { name: 'Default-736h.png',              width: 1242, height: 2208 },
       { name: 'Default-Landscape-736h.png',    width: 2208, height: 1242 },
+      { name: 'Default-2436h.png',             width: 1125, height: 2436 },
+      { name: 'Default-Landscape-2436h.png',   width: 2436, height: 1125 },
       // iPad
       { name: 'Default-Portrait~ipad.png',     width: 768,  height: 1024 },
       { name: 'Default-Portrait@2x~ipad.png',  width: 1536, height: 2048 },
