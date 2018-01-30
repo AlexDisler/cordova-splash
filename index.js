@@ -5,15 +5,18 @@ var ig     = require('imagemagick');
 var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
-var argv   = require('minimist')(process.argv.slice(2));
+var optparse = require('optparse');
 
 /**
  * @var {Object} settings - names of the config file and of the splash image
  */
 var settings = {};
-settings.CONFIG_FILE = argv.config || 'config.xml';
-settings.SPLASH_FILE = argv.splash || 'splash.png';
-settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
+settings.CONFIG_FILE = 'config.xml';
+settings.SPLASH_FILE   = 'splash.png';
+settings.RESOURCE_PATH = 'config/res'; // without trailing slash
+settings.SCREEN_DIR = 'screen'; // without slashes
+settings.USE_PLATFORMS_PATH = true; // true to use platforms path
+settings.OLD_XCODE_PATH = false;
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -34,7 +37,8 @@ var getPlatforms = function (projectName) {
     name : 'ios',
     // TODO: use async fs.exists
     isAdded : fs.existsSync('platforms/ios'),
-    splashPath : 'platforms/ios/' + projectName + xcodeFolder,
+    splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/ios/').replace('//', '/'),
+    platformSplashPath : 'platforms/ios/' + projectName + xcodeFolder,
     splash : [
       // iPhone
       { name: 'Default~iphone.png',            width: 320,  height: 480  },
@@ -55,7 +59,8 @@ var getPlatforms = function (projectName) {
   platforms.push({
     name : 'android',
     isAdded : fs.existsSync('platforms/android'),
-    splashPath : 'platforms/android/res/',
+    splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/android/').replace('//', '/'),
+    platformSplashPath: 'platforms/android/res/',
     splash : [
       // Landscape
       { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
@@ -76,7 +81,8 @@ var getPlatforms = function (projectName) {
   platforms.push({
     name : 'windows',
     isAdded : fs.existsSync('platforms/windows'),
-    splashPath : 'platforms/windows/images/',
+    splashPath :(settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/windows/').replace('//', '/'),
+    platformSplashPath: 'platforms/windows/images/',
     splash : [
       // Landscape
       { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
@@ -151,7 +157,8 @@ var generateSplash = function (platform, splash) {
   if (fs.existsSync(platformPath)) {
     srcPath = platformPath;
   }
-  var dstPath = platform.splashPath + splash.name;
+  var dstPath = (settings.USE_PLATFORMS_PATH ? 
+	platform.platformSplashPath : platform.splashPath) + splash.name;
   var dst = path.dirname(dstPath);
   if (!fs.existsSync(dst)) {
     fs.mkdirsSync(dst);
@@ -168,7 +175,7 @@ var generateSplash = function (platform, splash) {
       deferred.reject(err);
     } else {
       deferred.resolve();
-      display.success(splash.name + ' created');
+      display.success(splash.name + ' created [' + dstPath + ']');
     }
   });
   return deferred.promise;
@@ -280,11 +287,79 @@ var configFileExists = function () {
   return deferred.promise;
 };
 
+var resourcePathExists = function () {
+  var deferred = Q.defer();
+
+  if (!settings.USE_PLATFORMS_PATH) {
+    fs.exists(settings.RESOURCE_PATH, function (exists) {
+      if (exists) {
+        display.success(settings.RESOURCE_PATH + ' exists');
+        deferred.resolve();
+      } else {
+        display.error('cordova\'s ' + settings.RESOURCE_PATH + ' does not exist');
+        deferred.reject();
+      }
+    });
+  } else {
+    deferred.resolve();
+  }
+  return deferred.promise;
+};
+
+/**
+ * parse command line options
+ */
+var parseOptions = function() {
+  var switches = [
+     ['-h', '--help', 'Show this help'],
+     ['-s', '--splash DIR', 'splash file in PATH, defaults to ' + settings.SPLASH_FILE],
+     ['-c', '--config DIR', 'screen file in PATH, defaults to ' + settings.CONFIG_FILE],
+     ['-p', '--platform', 'use platform resources path, defaults to ' + settings.USE_PLATFORMS_PATH],
+     ['-r', '--resource PATH', 'resource path, (overrides -b and -i), defaults to ' + settings.RESOURCE_PATH],
+     ['-rs', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
+     ['-xo', '--xcode-old', 'use old version of Cordova for iOS and generate file in /Resources/icons/'],
+  ];
+  var parser = new optparse.OptionParser(switches);
+  parser.on('help', function() {
+	  console.log(parser.toString());
+	  process.exit();
+  });
+  parser.on('config', function(opt, path) {
+    settings.CONFIG_FILE = path;
+  });
+  parser.on('splash', function(opt, path) {
+    settings.SPLASH_FILE = path;
+  });
+  parser.on('platform', function(opt, path) {
+    // Can be use if USE_PLATFORMS_PATH is set to false by default in the future.
+    settings.USE_PLATFORMS_PATH = true;
+  });
+  parser.on('resource', function(opt, path) {
+    // Only update if value provided, otherwise assum default.
+    if (path) {
+      settings.RESOURCE_PATH = path; 
+    }
+    settings.USE_PLATFORMS_PATH = false;
+  });
+  parser.on('screen', function(opt, path) {
+	  settings.SCREEN_DIR = path;
+    settings.USE_PLATFORMS_PATH = false;
+  });
+  parser.on('xcode-old', function() {
+    settings.OLD_XCODE_PATH = true;
+  });
+
+  parser.parse(process.argv);
+};
+
+parseOptions();
+
 display.header('Checking Project & Splash');
 
 atLeastOnePlatformFound()
 .then(validSplashExists)
 .then(configFileExists)
+.then(resourcePathExists)
 .then(getProjectName)
 .then(getPlatforms)
 .then(generateSplashes)
