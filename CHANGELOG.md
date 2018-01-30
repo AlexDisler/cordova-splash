@@ -2,6 +2,13 @@
 All notable changes to this project [will be documented](http://keepachangelog.com/) in this file.
 This project *tries to* adhere to [Semantic Versioning](http://semver.org/).
 
+## [0.9.x] - 
+- Add --help option
+- Ability to specify resource output path via --path
+- Ability to specify resource screen output path via --screen-dir
+
+- Use optparse instead of minimist
+
 ## [0.9.0] - 2016-08-24
 - Add optional config and icon CLI args (#32)
 - Added Windows SplashScreenPhone sizes (#31)

@@ -5,15 +5,18 @@ var ig     = require('imagemagick');
 var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
-var argv   = require('minimist')(process.argv.slice(2));
+var optparse = require('optparse');
 
 /**
  * @var {Object} settings - names of the config file and of the splash image
  */
 var settings = {};
-settings.CONFIG_FILE = argv.config || 'config.xml';
-settings.SPLASH_FILE = argv.splash || 'splash.png';
-settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
+settings.CONFIG_FILE = 'config.xml';
+settings.SPLASH_FILE   = 'splash.png';
+settings.RESOURCE_PATH = 'config/res'; // without trailing slash
+settings.SCREEN_DIR = 'screen'; // without slashes
+settings.USE_PLATFORMS_PATH = true; // true to use platforms path
+settings.OLD_XCODE_PATH = false;
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -34,28 +37,42 @@ var getPlatforms = function (projectName) {
     name : 'ios',
     // TODO: use async fs.exists
     isAdded : fs.existsSync('platforms/ios'),
-    splashPath : 'platforms/ios/' + projectName + xcodeFolder,
+    splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/ios/').replace('//', '/'),
+    platformSplashPath : 'platforms/ios/' + projectName + xcodeFolder,
     splash : [
       // iPhone
-      { name: 'Default~iphone.png',            width: 320,  height: 480  },
-      { name: 'Default@2x~iphone.png',         width: 640,  height: 960  },
-      { name: 'Default-568h@2x~iphone.png',    width: 640,  height: 1136 },
-      { name: 'Default-667h.png',              width: 750,  height: 1334 },
-      { name: 'Default-736h.png',              width: 1242, height: 2208 },
-      { name: 'Default-Landscape-736h.png',    width: 2208, height: 1242 },
-      { name: 'Default-2436h.png',             width: 1125, height: 2436 },
-      { name: 'Default-Landscape-2436h.png',   width: 2436, height: 1125 },
+      { name: 'Default-568h@2x~iphone.png',           width: 640,  height: 1136 },
+      { name: 'Default-667h.png',                     width: 750,  height: 1334 },
+      { name: 'Default-736h.png',                     width: 1242, height: 2208 },
+      { name: 'Default-Landscape-736h.png',           width: 2208, height: 1242 },
+      { name: 'Default-2436h.png',                    width: 1125, height: 2436 },
+      { name: 'Default-Landscape-2436h.png',          width: 2436, height: 1125 },
+      { name: 'Default@2x~iphone.png',                width: 640,  height: 960  },
+      { name: 'Default~iphone.png',                   width: 320,  height: 480  },
+      { name: 'Default-Portrait~iphone.png',          width: 320,  height: 480  },
+      { name: 'Default-Portrait@2x~iphone.png',       width: 640,  height: 960  },
+      { name: 'Default-Portrait-568h@2x~iphone.png',  width: 640,  height: 1136 },
+      { name: 'Default-Portrait-667h@2x~iphone.png',  width: 750,  height: 1334 },
+      { name: 'Default-Portrait-736h@3x~iphone.png',  width: 1242, height: 2208 },
+      { name: 'Default-Landscape~iphone.png',         width: 480,  height: 320  },
+      { name: 'Default-Landscape@2x~iphone.png',      width: 960,  height: 640  },
+      { name: 'Default-Landscape-568h@2x~iphone.png', width: 1136, height: 640  },
+      { name: 'Default-Landscape-667h@2x~iphone.png', width: 1334, height: 750  },
+      { name: 'Default-Landscape-736h@3x~iphone.png', width: 2208, height: 1242 },
       // iPad
-      { name: 'Default-Portrait~ipad.png',     width: 768,  height: 1024 },
-      { name: 'Default-Portrait@2x~ipad.png',  width: 1536, height: 2048 },
-      { name: 'Default-Landscape~ipad.png',    width: 1024, height: 768  },
-      { name: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 }
+      { name: 'Default-Portrait~ipad.png',            width: 768,  height: 1024 },
+      { name: 'Default-Portrait@2x~ipad.png',         width: 1536, height: 2048 },
+      { name: 'Default-Portrait@2x~ipad-pro.png',     width: 2048, height: 2732 },
+      { name: 'Default-Landscape~ipad.png',           width: 1024, height: 768  },
+      { name: 'Default-Landscape@2x~ipad.png',        width: 2048, height: 1536 },
+      { name: 'Default-Landscape@2x~ipad-pro.png',    width: 2732, height: 2048 }
     ]
   });
   platforms.push({
     name : 'android',
     isAdded : fs.existsSync('platforms/android'),
-    splashPath : 'platforms/android/res/',
+    splashPath : (settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/android/').replace('//', '/'),
+    platformSplashPath: 'platforms/android/res/',
     splash : [
       // Landscape
       { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
@@ -76,7 +93,8 @@ var getPlatforms = function (projectName) {
   platforms.push({
     name : 'windows',
     isAdded : fs.existsSync('platforms/windows'),
-    splashPath : 'platforms/windows/images/',
+    splashPath :(settings.RESOURCE_PATH + '/' + settings.SCREEN_DIR + '/windows/').replace('//', '/'),
+    platformSplashPath: 'platforms/windows/images/',
     splash : [
       // Landscape
       { name: 'SplashScreen.scale-100.png', width: 620,  height: 300  },
@@ -151,7 +169,8 @@ var generateSplash = function (platform, splash) {
   if (fs.existsSync(platformPath)) {
     srcPath = platformPath;
   }
-  var dstPath = platform.splashPath + splash.name;
+  var dstPath = (settings.USE_PLATFORMS_PATH ? 
+	platform.platformSplashPath : platform.splashPath) + splash.name;
   var dst = path.dirname(dstPath);
   if (!fs.existsSync(dst)) {
     fs.mkdirsSync(dst);
@@ -168,7 +187,7 @@ var generateSplash = function (platform, splash) {
       deferred.reject(err);
     } else {
       deferred.resolve();
-      display.success(splash.name + ' created');
+      display.success(splash.name + ' created [' + dstPath + ']');
     }
   });
   return deferred.promise;
@@ -280,11 +299,74 @@ var configFileExists = function () {
   return deferred.promise;
 };
 
+var resourcePathExists = function () {
+  var deferred = Q.defer();
+
+  if (!settings.USE_PLATFORMS_PATH) {
+    fs.exists(settings.RESOURCE_PATH, function (exists) {
+      if (exists) {
+        display.success(settings.RESOURCE_PATH + ' exists');
+        deferred.resolve();
+      } else {
+        display.error('cordova\'s ' + settings.RESOURCE_PATH + ' does not exist');
+        deferred.reject();
+      }
+    });
+  } else {
+    deferred.resolve();
+  }
+  return deferred.promise;
+};
+
+/**
+ * parse command line options
+ */
+var parseOptions = function() {
+  var switches = [
+     ['-h', '--help', 'Show this help'],
+     ['-s', '--splash DIR', 'splash file in PATH, defaults to ' + settings.SPLASH_FILE],
+     ['-c', '--config DIR', 'config file in PATH, defaults to ' + settings.CONFIG_FILE],
+     ['-p', '--path PATH', 'resource path, defaults to ' + settings.RESOURCE_PATH],
+     ['-sd', '--screen-dir DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
+     ['-xo', '--xcode-old', 'use old version of Cordova for iOS and generate file in /Resources/icons/'],
+  ];
+  var parser = new optparse.OptionParser(switches);
+  parser.on('help', function() {
+	  console.log(parser.toString());
+	  process.exit();
+  });
+  parser.on('config', function(opt, path) {
+    settings.CONFIG_FILE = path;
+  });
+  parser.on('splash', function(opt, path) {
+    settings.SPLASH_FILE = path;
+  });
+  parser.on('path', function(opt, path) {
+    // Only update if value provided, otherwise assum default and disable .
+    if (path) {
+      settings.RESOURCE_PATH = path; 
+    }
+    settings.USE_PLATFORMS_PATH = false;
+  });
+  parser.on('screen-dir', function(opt, path) {
+	  settings.SCREEN_DIR = path;
+    settings.USE_PLATFORMS_PATH = false;
+  });
+  parser.on('xcode-old', function() {
+    settings.OLD_XCODE_PATH = true;
+  });
+
+  parser.parse(process.argv);
+};
+
+parseOptions();
+
 display.header('Checking Project & Splash');
 
 atLeastOnePlatformFound()
 .then(validSplashExists)
 .then(configFileExists)
+.then(resourcePathExists)
 .then(getProjectName)
 .then(getPlatforms)
 .then(generateSplashes)
