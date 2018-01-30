@@ -326,9 +326,8 @@ var parseOptions = function() {
      ['-h', '--help', 'Show this help'],
      ['-s', '--splash DIR', 'splash file in PATH, defaults to ' + settings.SPLASH_FILE],
      ['-c', '--config DIR', 'screen file in PATH, defaults to ' + settings.CONFIG_FILE],
-     ['-p', '--platform', 'use platform resources path, defaults to ' + settings.USE_PLATFORMS_PATH],
-     ['-r', '--resource PATH', 'resource path, (overrides -b and -i), defaults to ' + settings.RESOURCE_PATH],
-     ['-rs', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
+     ['-p', '--path PATH', 'resource path, (overrides -b), defaults to ' + settings.RESOURCE_PATH],
+     ['-ps', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
      ['-xo', '--xcode-old', 'use old version of Cordova for iOS and generate file in /Resources/icons/'],
   ];
   var parser = new optparse.OptionParser(switches);
@@ -342,12 +341,8 @@ var parseOptions = function() {
   parser.on('splash', function(opt, path) {
     settings.SPLASH_FILE = path;
   });
-  parser.on('platform', function(opt, path) {
-    // Can be use if USE_PLATFORMS_PATH is set to false by default in the future.
-    settings.USE_PLATFORMS_PATH = true;
-  });
-  parser.on('resource', function(opt, path) {
-    // Only update if value provided, otherwise assum default.
+  parser.on('path', function(opt, path) {
+    // Only update if value provided, otherwise assum default and disable .
     if (path) {
       settings.RESOURCE_PATH = path; 
     }

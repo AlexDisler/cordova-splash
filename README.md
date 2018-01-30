@@ -23,9 +23,9 @@ Create a `splash.png` file in the root folder of your cordova project and run:
 You may specify the output path and directory as follows:
 
     # output to path/to/res/screen
-    $ cordova-splash -resource path/to/res -screen screen
+    $ cordova-splash -path path/to/res -screen screen
     
-This will override the --resource and -screen settings.
+This will override the --path and -screen settings.
     
 You also can specify manually a location for your `config.xml` or `splash.png`:
 
