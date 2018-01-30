@@ -19,7 +19,14 @@ The splash screen image should be 2208x2208 px with a center square of about 120
 Create a `splash.png` file in the root folder of your cordova project and run:
 
     $ cordova-splash
+    
+You may specify the output path and directory as follows:
 
+    # output to path/to/res/screen
+    $ cordova-splash -resource path/to/res -screen screen
+    
+This will override the --resource and -screen settings.
+    
 You also can specify manually a location for your `config.xml` or `splash.png`:
 
     $ cordova-splash --config=config.xml --splash=splash.png
