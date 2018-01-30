@@ -325,9 +325,9 @@ var parseOptions = function() {
   var switches = [
      ['-h', '--help', 'Show this help'],
      ['-s', '--splash DIR', 'splash file in PATH, defaults to ' + settings.SPLASH_FILE],
-     ['-c', '--config DIR', 'screen file in PATH, defaults to ' + settings.CONFIG_FILE],
-     ['-p', '--path PATH', 'resource path, (overrides -b), defaults to ' + settings.RESOURCE_PATH],
-     ['-ps', '--screen DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
+     ['-c', '--config DIR', 'config file in PATH, defaults to ' + settings.CONFIG_FILE],
+     ['-p', '--path PATH', 'resource path, defaults to ' + settings.RESOURCE_PATH],
+     ['-sd', '--screen-dir DIR', 'screen directory in PATH, defaults to ' + settings.SCREEN_DIR],
      ['-xo', '--xcode-old', 'use old version of Cordova for iOS and generate file in /Resources/icons/'],
   ];
   var parser = new optparse.OptionParser(switches);
@@ -348,7 +348,7 @@ var parseOptions = function() {
     }
     settings.USE_PLATFORMS_PATH = false;
   });
-  parser.on('screen', function(opt, path) {
+  parser.on('screen-dir', function(opt, path) {
 	  settings.SCREEN_DIR = path;
     settings.USE_PLATFORMS_PATH = false;
   });
