@@ -5,7 +5,7 @@ This project *tries to* adhere to [Semantic Versioning](http://semver.org/).
 ## [0.9.x] - 
 - Add --help option
 - Ability to specify resource output path via --path
-- Ability to specify resource screen output path via --screen
+- Ability to specify resource screen output path via --screen-dir
 
 - Use optparse instead of minimist
 
