@@ -34,11 +34,11 @@ If you run a old version of Cordova for iOS and you need your files in `/Resourc
 
 #### iOS Storyboard Images
 
-To generate iOS storyboard images, using the following:
+To generate iOS storyboard images, use the following:
 
     $ cordova-splash --use-storyboard=true
 
-To generate a singular iOS storyboard image, reducing the app file size, use the following:
+To generate a singular iOS storyboard image _(reduces the file size of the app)_, use the following:
 
     $ cordova-splash --use-storyboard-singular=true
 
