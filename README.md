@@ -32,6 +32,16 @@ If you run a old version of Cordova for iOS and you need your files in `/Resourc
 
     $ cordova-splash --xcode-old
 
+#### iOS Storyboard Images
+
+To generate iOS storyboard images, using the following:
+
+    $ cordova-splash --use-storyboard=true
+
+To generate a singular iOS storyboard image, reducing the app file size, use the following:
+
+    $ cordova-splash --use-storyboard-singular=true
+
 #### Notes:
 
 - Your `config.ml` file will not be updated by the tool (because images are automatically created in the good folders)
