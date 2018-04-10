@@ -14,6 +14,8 @@ var settings = {};
 settings.CONFIG_FILE = argv.config || 'config.xml';
 settings.SPLASH_FILE = argv.splash || 'splash.png';
 settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
+settings.USE_STORYBOARD = argv['use-storyboard'] || false;
+settings.USE_STORYBOARD_SINGULAR = argv['use-storyboard-singular'] || false;
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -25,33 +27,71 @@ var getPlatforms = function (projectName) {
   var deferred = Q.defer();
   var platforms = [];
   var xcodeFolder = '/Images.xcassets/LaunchImage.launchimage/';
+  var xcodeStoryboardFolder = '/Images.xcassets/LaunchStoryboard.imageset/';
 
   if (settings.OLD_XCODE_PATH) {
     xcodeFolder = '/Resources/splash/';
   }
+  
+  if (settings.USE_STORYBOARD) {
 
-  platforms.push({
-    name : 'ios',
-    // TODO: use async fs.exists
-    isAdded : fs.existsSync('platforms/ios'),
-    splashPath : 'platforms/ios/' + projectName + xcodeFolder,
-    splash : [
-      // iPhone
-      { name: 'Default~iphone.png',            width: 320,  height: 480  },
-      { name: 'Default@2x~iphone.png',         width: 640,  height: 960  },
-      { name: 'Default-568h@2x~iphone.png',    width: 640,  height: 1136 },
-      { name: 'Default-667h.png',              width: 750,  height: 1334 },
-      { name: 'Default-736h.png',              width: 1242, height: 2208 },
-      { name: 'Default-Landscape-736h.png',    width: 2208, height: 1242 },
-      { name: 'Default-2436h.png',             width: 1125, height: 2436 },
-      { name: 'Default-Landscape-2436h.png',   width: 2436, height: 1125 },
-      // iPad
-      { name: 'Default-Portrait~ipad.png',     width: 768,  height: 1024 },
-      { name: 'Default-Portrait@2x~ipad.png',  width: 1536, height: 2048 },
-      { name: 'Default-Landscape~ipad.png',    width: 1024, height: 768  },
-      { name: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 }
-    ]
-  });
+    platforms.push({
+      name : 'ios',
+      // TODO: use async fs.exists
+      isAdded : fs.existsSync('platforms/ios'),
+      splashPath : 'platforms/ios/' + projectName + xcodeStoryboardFolder,
+      splash : [
+        // iPhone
+        { name: 'Default@2x~iphone~anyany.png', width: 1334, height: 1334 },
+        { name: 'Default@2x~iphone~comany.png', width: 750,  height: 1334 },
+        { name: 'Default@2x~iphone~comcom.png', width: 1334, height: 750 },
+        { name: 'Default@3x~iphone~anyany.png', width: 2208, height: 2208 },
+        { name: 'Default@3x~iphone~anycom.png', width: 2208, height: 1242 },
+        { name: 'Default@3x~iphone~comany.png', width: 1242, height: 2208 },
+        // iPad
+        { name: 'Default@2x~ipad~anyany.png',   width: 2732, height: 2732 },
+        { name: 'Default@2x~ipad~comany.png',   width: 1278,  height: 2732 }
+      ]
+    });
+  }
+  else if (settings.USE_STORYBOARD_SINGULAR) {
+
+    platforms.push({
+      name : 'ios',
+      // TODO: use async fs.exists
+      isAdded : fs.existsSync('platforms/ios'),
+      splashPath : 'platforms/ios/' + projectName + xcodeStoryboardFolder,
+      splash : [
+        { name: 'Default@2x~universal~anyany.png',   width: 2732, height: 2732 }
+      ]
+    });
+  }
+  else {
+
+    platforms.push({
+      name : 'ios',
+      // TODO: use async fs.exists
+      isAdded : fs.existsSync('platforms/ios'),
+      splashPath : 'platforms/ios/' + projectName + xcodeFolder,
+      splash : [
+        // iPhone
+        { name: 'Default~iphone.png',            width: 320,  height: 480  },
+        { name: 'Default@2x~iphone.png',         width: 640,  height: 960  },
+        { name: 'Default-568h@2x~iphone.png',    width: 640,  height: 1136 },
+        { name: 'Default-667h.png',              width: 750,  height: 1334 },
+        { name: 'Default-736h.png',              width: 1242, height: 2208 },
+        { name: 'Default-Landscape-736h.png',    width: 2208, height: 1242 },
+        { name: 'Default-2436h.png',             width: 1125, height: 2436 },
+        { name: 'Default-Landscape-2436h.png',   width: 2436, height: 1125 },
+        // iPad
+        { name: 'Default-Portrait~ipad.png',     width: 768,  height: 1024 },
+        { name: 'Default-Portrait@2x~ipad.png',  width: 1536, height: 2048 },
+        { name: 'Default-Landscape~ipad.png',    width: 1024, height: 768  },
+        { name: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 }
+      ]
+    });
+  }
+  
   platforms.push({
     name : 'android',
     isAdded : fs.existsSync('platforms/android'),
@@ -73,6 +113,7 @@ var getPlatforms = function (projectName) {
       { name: 'drawable-port-xxxhdpi/screen.png', width: 1280, height: 1920  }
     ]
   });
+
   platforms.push({
     name : 'windows',
     isAdded : fs.existsSync('platforms/windows'),
@@ -92,7 +133,9 @@ var getPlatforms = function (projectName) {
       { name: 'SplashScreenPhone.scale-100.png', width: 480,  height: 800  }
     ]
   });
+
   deferred.resolve(platforms);
+
   return deferred.promise;
 };
 
