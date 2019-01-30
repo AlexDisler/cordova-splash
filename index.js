@@ -14,6 +14,7 @@ var settings = {};
 settings.CONFIG_FILE = argv.config || 'config.xml';
 settings.SPLASH_FILE = argv.splash || 'splash.png';
 settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
+settings.USE_STORYBOARD = argv['use-storyboard'] || false;
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -25,6 +26,7 @@ var getPlatforms = function (projectName) {
   var deferred = Q.defer();
   var platforms = [];
   var xcodeFolder = '/Images.xcassets/LaunchImage.launchimage/';
+  var xcodeStoryboardFolder = '/Images.xcassets/LaunchStoryboard.imageset/';
 
   if (settings.OLD_XCODE_PATH) {
     xcodeFolder = '/Resources/splash/';
@@ -56,6 +58,28 @@ var getPlatforms = function (projectName) {
       { name: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 }
     ]
   });
+  
+  if (settings.USE_STORYBOARD) {
+    platforms.push({
+      name : 'ios',
+      // TODO: use async fs.exists
+      isAdded : fs.existsSync('platforms/ios'),
+      splashPath : 'platforms/ios/' + projectName + xcodeStoryboardFolder,
+      splash : [
+        // iPhone
+        { name: 'Default@2x~iphone~anyany.png', width: 1334,  height: 1334  },
+        { name: 'Default@2x~iphone~comany.png', width: 750, height: 1334  },
+        { name: 'Default@2x~iphone~comcom.png',   width: 1334,  height: 750 },
+        { name: 'Default@3x~iphone~anyany.png', width: 2208,  height: 2208 },
+        { name: 'Default@3x~iphone~anycom.png', width: 2208, height: 1242 },
+        { name: 'Default@3x~iphone~comany.png', width: 1242, height: 2208 },
+        // iPad
+        { name: 'Default@2x~ipad~anyany.png',   width: 2732, height: 2732 },
+        { name: 'Default@2x~ipad~comany.png',   width: 1278,  height: 2732 }
+      ]
+    });    
+  }
+  
   platforms.push({
     name : 'android',
     isAdded : fs.existsSync('platforms/android'),
