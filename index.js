@@ -6,14 +6,37 @@ var colors = require('colors');
 var _      = require('underscore');
 var Q      = require('q');
 var argv   = require('minimist')(process.argv.slice(2));
+const CAPACITOR_CONFIG_FILE = 'capacitor.config.json';
+const CORDOVA_CONFIG_FILE = 'config.xml';
 
 /**
  * @var {Object} settings - names of the config file and of the splash image
  */
 var settings = {};
-settings.CONFIG_FILE = argv.config || 'config.xml';
+settings.CAPACITOR = argv.capacitor || fs.existsSync(CAPACITOR_CONFIG_FILE);
+settings.CONFIG_FILE = argv.config || (settings.CAPACITOR ? CAPACITOR_CONFIG_FILE : CORDOVA_CONFIG_FILE);
 settings.SPLASH_FILE = argv.splash || 'splash.png';
 settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
+settings.ANDROID_SPLASH_FILENAME = argv.android_filename || 'splash.png';
+// console.log("settings=",settings);
+
+const platform_paths = settings.CAPACITOR ? {
+  ios: 'ios',
+  android: 'android'
+} : {
+  ios: 'platforms/ios',
+  android: 'platforms/android'
+};
+
+const platform_splash_paths = settings.CAPACITOR ? {
+  // todo check if this path is correct for capacitor ios
+  ios: settings.OLD_XCODE_PATH ? '/Resources/splash/' : '/Images.xcassets/LaunchImage.launchimage/',
+  android: '/app/src/main/res/'
+} : {
+  ios: settings.OLD_XCODE_PATH ? '/Resources/splash/' : '/Images.xcassets/LaunchImage.launchimage/',
+  android: '/res/'
+};
+
 
 /**
  * Check which platforms are added to the project and return their splash screen names and sizes
@@ -24,17 +47,12 @@ settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
 var getPlatforms = function (projectName) {
   var deferred = Q.defer();
   var platforms = [];
-  var xcodeFolder = '/Images.xcassets/LaunchImage.launchimage/';
-
-  if (settings.OLD_XCODE_PATH) {
-    xcodeFolder = '/Resources/splash/';
-  }
 
   platforms.push({
     name : 'ios',
     // TODO: use async fs.exists
-    isAdded : fs.existsSync('platforms/ios'),
-    splashPath : 'platforms/ios/' + projectName + xcodeFolder,
+    isAdded : fs.existsSync(platform_paths.ios),
+    splashPath : platform_paths.ios + projectName + platform_splash_paths.ios,
     splash : [
       // iPhone
       { name: 'Default~iphone.png',            width: 320,  height: 480  },
@@ -58,23 +76,23 @@ var getPlatforms = function (projectName) {
   });
   platforms.push({
     name : 'android',
-    isAdded : fs.existsSync('platforms/android'),
-    splashPath : 'platforms/android/res/',
+    isAdded : fs.existsSync(platform_paths.android),
+    splashPath : platform_paths.android + platform_splash_paths.android,
     splash : [
       // Landscape
-      { name: 'drawable-land-ldpi/screen.png',  width: 320,  height: 200  },
-      { name: 'drawable-land-mdpi/screen.png',  width: 480,  height: 320  },
-      { name: 'drawable-land-hdpi/screen.png',  width: 800,  height: 480  },
-      { name: 'drawable-land-xhdpi/screen.png', width: 1280, height: 720  },
-      { name: 'drawable-land-xxhdpi/screen.png', width: 1600, height: 960  },
-      { name: 'drawable-land-xxxhdpi/screen.png', width: 1920, height: 1280  },
+      { name: 'drawable-land-ldpi/' + settings.ANDROID_SPLASH_FILENAME,  width: 320,  height: 200  },
+      { name: 'drawable-land-mdpi/' + settings.ANDROID_SPLASH_FILENAME,  width: 480,  height: 320  },
+      { name: 'drawable-land-hdpi/' + settings.ANDROID_SPLASH_FILENAME,  width: 800,  height: 480  },
+      { name: 'drawable-land-xhdpi/' + settings.ANDROID_SPLASH_FILENAME, width: 1280, height: 720  },
+      { name: 'drawable-land-xxhdpi/' + settings.ANDROID_SPLASH_FILENAME, width: 1600, height: 960  },
+      { name: 'drawable-land-xxxhdpi/' + settings.ANDROID_SPLASH_FILENAME, width: 1920, height: 1280  },
       // Portrait
-      { name: 'drawable-port-ldpi/screen.png',  width: 200,  height: 320  },
-      { name: 'drawable-port-mdpi/screen.png',  width: 320,  height: 480  },
-      { name: 'drawable-port-hdpi/screen.png',  width: 480,  height: 800  },
-      { name: 'drawable-port-xhdpi/screen.png', width: 720,  height: 1280 },
-      { name: 'drawable-port-xxhdpi/screen.png', width: 960, height: 1600  },
-      { name: 'drawable-port-xxxhdpi/screen.png', width: 1280, height: 1920  }
+      { name: 'drawable-port-ldpi/' + settings.ANDROID_SPLASH_FILENAME,  width: 200,  height: 320  },
+      { name: 'drawable-port-mdpi/' + settings.ANDROID_SPLASH_FILENAME,  width: 320,  height: 480  },
+      { name: 'drawable-port-hdpi/' + settings.ANDROID_SPLASH_FILENAME,  width: 480,  height: 800  },
+      { name: 'drawable-port-xhdpi/' + settings.ANDROID_SPLASH_FILENAME, width: 720,  height: 1280 },
+      { name: 'drawable-port-xxhdpi/' + settings.ANDROID_SPLASH_FILENAME, width: 960, height: 1600  },
+      { name: 'drawable-port-xxxhdpi/' + settings.ANDROID_SPLASH_FILENAME, width: 1280, height: 1920  }
     ]
   });
   platforms.push({
@@ -96,6 +114,7 @@ var getPlatforms = function (projectName) {
       { name: 'SplashScreenPhone.scale-100.png', width: 480,  height: 800  }
     ]
   });
+  // console.info(platforms);
   deferred.resolve(platforms);
   return deferred.promise;
 };
@@ -172,7 +191,7 @@ var generateSplash = function (platform, splash) {
       deferred.reject(err);
     } else {
       deferred.resolve();
-      display.success(splash.name + ' created');
+      display.success(dstPath + ' created');
     }
   });
   return deferred.promise;
@@ -192,11 +211,7 @@ var generateSplashForPlatform = function (platform) {
   splashes.forEach(function (splash) {
     all.push(generateSplash(platform, splash));
   });
-  Q.all(all).then(function () {
-    deferred.resolve();
-  }).catch(function (err) {
-    console.log(err);
-  });
+  Q.all(all).then(deferred.resolve).catch(console.log);
   return deferred.promise;
 };
 
@@ -284,7 +299,42 @@ var configFileExists = function () {
   return deferred.promise;
 };
 
+if (settings.CAPACITOR) {
+  configFileExists = function () {
+    var deferred = Q.defer();
+    fs.exists(settings.CONFIG_FILE, function (exists) {
+      if (exists) {
+        display.success(settings.CONFIG_FILE + ' exists');
+        deferred.resolve();
+      } else {
+        display.error('capacitor\'s ' + settings.CONFIG_FILE + ' does not exist');
+        deferred.reject();
+      }
+    });
+    return deferred.promise;
+  };
+
+  getProjectName = function() {
+    var deferred = Q.defer();
+    fs.readFile(settings.CONFIG_FILE, function (err, data) {
+      if (err) {
+        deferred.reject(err);
+      }
+      try {
+        var config = JSON.parse(data);
+        var projectName = config.appName;
+        deferred.resolve(projectName);
+      } catch (err) {
+        deferred.reject(err);
+      }
+    });
+    return deferred.promise;
+  };
+}
+
 display.header('Checking Project & Splash');
+
+display.success('Mode: ' + settings.CAPACITOR ? 'capacitor' : 'cordova');
 
 atLeastOnePlatformFound()
 .then(validSplashExists)
