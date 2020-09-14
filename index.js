@@ -35,7 +35,8 @@ var getPlatforms = function (projectName) {
       { name: 'Default-Portrait~ipad.png',     width: 768,  height: 1024 },
       { name: 'Default-Portrait@2x~ipad.png',  width: 1536, height: 2048 },
       { name: 'Default-Landscape~ipad.png',    width: 1024, height: 768  },
-      { name: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 }
+      { name: 'Default-Landscape@2x~ipad.png', width: 2048, height: 1536 },
+      { name: "Default@2x~universal~anyany.png", width: 2732, height: 2732 }
     ]
   });
   platforms.push({
